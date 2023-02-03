@@ -13,11 +13,7 @@ https://aquaproj.github.io/docs/reference/checksum
 
 ## Requirements
 
-- [aqua](https://aquaproj.github.io/)
-- [int128/ghcp](https://github.com/int128/ghcp): You can install ghcp with aqua (`aqua g -i int128/ghcp`)
-
 ```console
-$ aqua init
 $ aqua g -i int128/ghcp
 ```
 
