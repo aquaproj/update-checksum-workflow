@@ -32,7 +32,7 @@ on:
       - aqua-checksums.json
 jobs:
   update-aqua-checksums:
-    uses: aquaproj/update-checksum-workflow/.github/workflows/update-checksum.yaml@main
+    uses: aquaproj/update-checksum-workflow/.github/workflows/update-checksum.yaml@e8a6d58be16dadc8727cbae211a4c5ad24052151 # v0.1.0
     permissions:
       contents: read
     with:
