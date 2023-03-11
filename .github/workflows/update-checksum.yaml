@@ -1,5 +1,5 @@
 ---
-name: test
+name: update-aqua-checksums
 
 on:
   workflow_call:
@@ -18,6 +18,9 @@ on:
         required: false
         default: false
         type: boolean
+      ref:
+        required: false
+        type: string
     secrets:
       gh_app_id:
         required: false
@@ -37,8 +40,23 @@ jobs:
     permissions:
       contents: read # To checkout private repository
     steps:
+      - name: Get ref
+        id: ref
+        run: |
+          set -eu
+          ref=""
+          case "$GITHUB_EVENT_NAME" in
+            "pull_request" ) ref="${{github.event.pull_request.head.sha}}";;
+          esac
+          if [ -n "${{inputs.ref}}" ]; then
+            ref="${{inputs.ref}}"
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+        with:
+          ref: ${{steps.ref.outputs.ref}}
       - name: Generate token
         id: generate_token
         if: "! github.event.pull_request.head.repo.fork"
