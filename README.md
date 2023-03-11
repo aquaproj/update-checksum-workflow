@@ -5,7 +5,7 @@ If aqua-checksums.json isn't latest, update aqua-checksums.json and push a commi
 
 About aqua's Checksum Verification, please see the document too.
 
-https://aquaproj.github.io/docs/reference/checksum
+https://aquaproj.github.io/docs/security/checksum
 
 ## Workflow
 
