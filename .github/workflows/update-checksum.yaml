@@ -21,6 +21,9 @@ on:
       ref:
         required: false
         type: string
+      skip_push:
+        required: false
+        type: boolean
     secrets:
       gh_app_id:
         required: false
@@ -52,6 +55,21 @@ jobs:
             ref="${{inputs.ref}}"
           fi
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - name: Get skip_push
+        id: skip_push
+        run: |
+          set -eu
+          skip_push=""
+          case "$GITHUB_EVENT_NAME" in
+            "pull_request" ) skip_push="${{github.event.pull_request.head.repo.fork}}";;
+          esac
+          if [ -n "${{inputs.skip_push}}" ]; then
+            skip_push="${{inputs.skip_push}}"
+          fi
+          if [ -z "$skip_push" ]; then
+            skip_push=false
+          fi
+          echo "skip_push=$skip_push" >> "$GITHUB_OUTPUT"
 
       - name: Checkout
         uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
@@ -72,7 +90,7 @@ jobs:
           AQUA_GITHUB_TOKEN: ${{github.token}}
       - uses: aquaproj/update-checksum-action@d5d72955a3da19ccf7b9ecb8080bc92247fd6633 # v0.2.1
         with:
-          skip_push: ${{github.event.pull_request.head.repo.fork}}
+          skip_push: ${{steps.skip_push.outputs.skip_push}}
           prune: ${{inputs.prune}}
           working_directory: ${{inputs.working_directory}}
         env:
