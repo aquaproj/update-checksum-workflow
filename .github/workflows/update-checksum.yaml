@@ -1,5 +1,5 @@
 ---
-name: test
+name: update-aqua-checksums
 
 on:
   workflow_call:
@@ -18,7 +18,12 @@ on:
         required: false
         default: false
         type: boolean
+      ref:
+        required: false
+        type: string
     secrets:
+      gh_token:
+        required: false
       gh_app_id:
         required: false
       gh_app_private_key:
@@ -37,24 +42,69 @@ jobs:
     permissions:
       contents: read # To checkout private repository
     steps:
-      - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+      - name: Get ref
+        id: ref
+        run: |
+          set -eu
+          ref=""
+          case "$GITHUB_EVENT_NAME" in
+            "pull_request" ) ref="${{github.event.pull_request.head.sha}}";;
+          esac
+          if [ -n "${{inputs.ref}}" ]; then
+            ref="${{inputs.ref}}"
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
       - name: Generate token
         id: generate_token
         if: "! github.event.pull_request.head.repo.fork"
-        uses: tibdex/github-app-token@021a2405c7f990db57f5eae5397423dcc554159c # v1
+        uses: suzuki-shunsuke/github-token-action@04d633c696e9d09e958c8b815c75db9606d6d927 # v0.2.0
         with:
-          app_id: ${{secrets.gh_app_id}}
-          private_key: ${{secrets.gh_app_private_key}}
+          github_token: ${{secrets.gh_token}}
+          github_app_id: ${{secrets.gh_app_id}}
+          github_app_private_key: ${{secrets.gh_app_private_key}}
+
+      - name: Get skip_push
+        id: skip_push
+        run: |
+          set -eu
+          skip_push=""
+          case "$GITHUB_EVENT_NAME" in
+            "pull_request" ) skip_push="${{github.event.pull_request.head.repo.fork}}";;
+          esac
+          if [ -z "$skip_push" ]; then
+            skip_push=false
+          fi
+          if [ "$TOKEN_TYPE" = "empty" ]; then
+            skip_push=false
+          fi
+          echo "skip_push=$skip_push" >> "$GITHUB_OUTPUT"
+        env:
+          TOKEN_TYPE: ${{steps.generate_token.outputs.token_type}}
+
+      - name: Checkout
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+        with:
+          ref: ${{steps.ref.outputs.ref}}
+
       - uses: aquaproj/aqua-installer@61e2563dfe7674cbf74fe6ec212e444198a3bb00 # v2.0.2
+        if: steps.generate_token.outputs.token_type == 'empty'
         # Install ghcp
         with:
           aqua_version: ${{inputs.aqua_version}}
         env:
           AQUA_GITHUB_TOKEN: ${{github.token}}
+      - uses: aquaproj/aqua-installer@61e2563dfe7674cbf74fe6ec212e444198a3bb00 # v2.0.2
+        if: "steps.generate_token.outputs.token_type != 'empty'"
+        # Install ghcp
+        with:
+          aqua_version: ${{inputs.aqua_version}}
+        env:
+          AQUA_GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
+
       - uses: aquaproj/update-checksum-action@d5d72955a3da19ccf7b9ecb8080bc92247fd6633 # v0.2.1
         with:
-          skip_push: ${{github.event.pull_request.head.repo.fork}}
+          skip_push: ${{steps.skip_push.outputs.skip_push}}
           prune: ${{inputs.prune}}
           working_directory: ${{inputs.working_directory}}
         env:
