@@ -1,7 +1,6 @@
 ---
 name: update-aqua-checksums
 
-# :69:160: property "skip_push" is not defined in object type {aqua_policy_config: string; aqua_version: string; prune: bool; ref: string; working_directory: string}
 on:
   workflow_call:
     inputs:
@@ -59,7 +58,7 @@ jobs:
       - name: Generate token
         id: generate_token
         if: "! github.event.pull_request.head.repo.fork"
-        uses: suzuki-shunsuke/github-token-action@main
+        uses: suzuki-shunsuke/github-token-action@04d633c696e9d09e958c8b815c75db9606d6d927 # v0.2.0
         with:
           github_token: ${{secrets.gh_token}}
           github_app_id: ${{secrets.gh_app_id}}
@@ -84,7 +83,7 @@ jobs:
           TOKEN_TYPE: ${{steps.generate_token.outputs.token_type}}
 
       - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
         with:
           ref: ${{steps.ref.outputs.ref}}
 
