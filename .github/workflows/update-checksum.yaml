@@ -10,6 +10,9 @@ on:
       aqua_version:
         required: true
         type: string
+      policy_allow:
+        required: false
+        type: string
       working_directory:
         required: false
         default: ""
@@ -94,11 +97,12 @@ jobs:
           aqua_version: ${{inputs.aqua_version}}
         env:
           AQUA_GITHUB_TOKEN: ${{github.token}}
-      - uses: aquaproj/aqua-installer@61e2563dfe7674cbf74fe6ec212e444198a3bb00 # v2.0.2
+      - uses: aquaproj/aqua-installer@feat/policy_file
         if: "steps.generate_token.outputs.token_type != 'empty'"
         # Install ghcp
         with:
           aqua_version: ${{inputs.aqua_version}}
+          policy_allow: ${{inputs.policy_allow}}
         env:
           AQUA_GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
 
