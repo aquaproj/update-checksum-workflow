@@ -24,6 +24,15 @@ on:
       ref:
         required: false
         type: string
+      runs-on:
+        required: false
+        type: string
+        default: '"ubuntu-latest"'
+        description: |
+          JSON string for runs-on.
+          e.g.
+          runs-on: '"macos-latest"'
+          runs-on: '["foo"]'
     secrets:
       gh_token:
         required: false
@@ -41,7 +50,7 @@ permissions: {}
 jobs:
   update-aqua-checksums:
     # Update aqua-checksums.json and push a commit
-    runs-on: ubuntu-latest
+    runs-on: ${{fromJSON(inputs.runs-on)}}
     permissions:
       contents: read # To checkout private repository
     steps:
