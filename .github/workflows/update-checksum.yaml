@@ -33,6 +33,10 @@ on:
           e.g.
           runs-on: '"macos-latest"'
           runs-on: '["foo"]'
+      require_checksum:
+        required: false
+        default: ""
+        type: string
     secrets:
       gh_token:
         required: false
@@ -114,6 +118,11 @@ jobs:
           policy_allow: ${{inputs.policy_allow}}
         env:
           AQUA_GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
+
+      - run: echo "AQUA_REQUIRE_CHECKSUM=$REQUIRE_CHECKSUM" >> "$GITHUB_ENV"
+        if: inputs.require_checksum != ''
+        env:
+          REQUIRE_CHECKSUM: ${{inputs.require_checksum}}
 
       - uses: aquaproj/update-checksum-action@2fb7f676d407d4fb8c2c466c19d09d3ddec4f82f # v0.2.2
         with:
