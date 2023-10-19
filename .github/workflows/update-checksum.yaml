@@ -60,12 +60,15 @@ jobs:
           set -eu
           ref=""
           case "$GITHUB_EVENT_NAME" in
-            "pull_request" ) ref="${{github.event.pull_request.head.sha}}";;
+            "pull_request" | "pull_request_*" ) ref=$HEAD_SHA;;
           esac
-          if [ -n "${{inputs.ref}}" ]; then
-            ref="${{inputs.ref}}"
+          if [ -n "$INPUT_REF" ]; then
+            ref="$INPUT_REF"
           fi
           echo "ref=$ref" >> "$GITHUB_OUTPUT"
+        env:
+          HEAD_SHA: ${{github.event.pull_request.head.sha}}
+          INPUT_REF: ${{inputs.ref}}
 
       - name: Generate token
         id: generate_token
@@ -82,7 +85,7 @@ jobs:
           set -eu
           skip_push=""
           case "$GITHUB_EVENT_NAME" in
-            "pull_request" ) skip_push="${{github.event.pull_request.head.repo.fork}}";;
+            "pull_request" | "pull_request_*" ) skip_push="${{github.event.pull_request.head.repo.fork}}";;
           esac
           if [ -z "$skip_push" ]; then
             skip_push=false
