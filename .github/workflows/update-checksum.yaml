@@ -58,6 +58,7 @@ jobs:
         id: ref
         run: |
           set -eu
+          echo "::notice::GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
           ref=""
           case "$GITHUB_EVENT_NAME" in
             "pull_request" | "pull_request_*" ) ref=$HEAD_SHA;;
