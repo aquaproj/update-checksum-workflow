@@ -79,7 +79,7 @@ jobs:
       - name: Generate token
         id: generate_token
         if: "! github.event.pull_request.head.repo.fork"
-        uses: suzuki-shunsuke/github-token-action@feat-add-inputs-permissions-repositories
+        uses: suzuki-shunsuke/github-token-action@350d7506222e3a0016491abe85b5c4dd475b67d1 # v0.2.1
         with:
           github_token: ${{secrets.gh_token}}
           github_app_id: ${{secrets.gh_app_id}}
