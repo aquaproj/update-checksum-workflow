@@ -33,6 +33,10 @@ on:
           e.g.
           runs-on: '"macos-latest"'
           runs-on: '["foo"]'
+      gh_app_repositories:
+        required: false
+        type: string
+        default: ""
     secrets:
       gh_token:
         required: false
@@ -75,11 +79,16 @@ jobs:
       - name: Generate token
         id: generate_token
         if: "! github.event.pull_request.head.repo.fork"
-        uses: suzuki-shunsuke/github-token-action@04d633c696e9d09e958c8b815c75db9606d6d927 # v0.2.0
+        uses: suzuki-shunsuke/github-token-action@feat-add-inputs-permissions-repositories
         with:
           github_token: ${{secrets.gh_token}}
           github_app_id: ${{secrets.gh_app_id}}
           github_app_private_key: ${{secrets.gh_app_private_key}}
+          github_app_permissions: >-
+            {
+              "contents": "write"
+            }
+          github_app_repositories: ${{inputs.gh_app_repositories}}
 
       - name: Get skip_push
         id: skip_push
@@ -111,6 +120,7 @@ jobs:
           aqua_version: ${{inputs.aqua_version}}
         env:
           AQUA_GITHUB_TOKEN: ${{github.token}}
+
       - uses: aquaproj/aqua-installer@928a2ee4243a9ee8312d80dc8cbaca88fb602a91 # v2.2.0
         if: "steps.generate_token.outputs.token_type != 'empty'"
         # Install ghcp
