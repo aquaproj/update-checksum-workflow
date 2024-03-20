@@ -48,6 +48,8 @@ on:
 env:
   AQUA_POLICY_CONFIG: ${{inputs.aqua_policy_config}}
   AQUA_LOG_COLOR: always
+  AQUA_DISABLE_COSIGN: "true"
+  AQUA_DISABLE_SLSA: "true"
 
 permissions: {}
 
