@@ -54,6 +54,7 @@ permissions: {}
 jobs:
   update-aqua-checksums:
     # Update aqua-checksums.json and push a commit
+    timeout-minutes: 30
     runs-on: ${{fromJSON(inputs.runs-on)}}
     permissions:
       contents: read # To checkout private repository
