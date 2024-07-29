@@ -119,6 +119,7 @@ jobs:
         # Install ghcp
         with:
           aqua_version: ${{inputs.aqua_version}}
+          working_directory: ${{inputs.working_directory}}
         env:
           AQUA_GITHUB_TOKEN: ${{github.token}}
 
@@ -128,6 +129,7 @@ jobs:
         with:
           aqua_version: ${{inputs.aqua_version}}
           policy_allow: ${{inputs.policy_allow}}
+          working_directory: ${{inputs.working_directory}}
         env:
           AQUA_GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
 
