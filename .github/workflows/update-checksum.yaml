@@ -116,7 +116,6 @@ jobs:
 
       - uses: aquaproj/aqua-installer@6ce1f8848ec8e61f14d57bd5d7597057a6dd187c # v3.0.1
         if: steps.generate_token.outputs.token_type == 'empty'
-        # Install ghcp
         with:
           aqua_version: ${{inputs.aqua_version}}
           policy_allow: ${{inputs.policy_allow}}
@@ -126,7 +125,6 @@ jobs:
 
       - uses: aquaproj/aqua-installer@6ce1f8848ec8e61f14d57bd5d7597057a6dd187c # v3.0.1
         if: "steps.generate_token.outputs.token_type != 'empty'"
-        # Install ghcp
         with:
           aqua_version: ${{inputs.aqua_version}}
           policy_allow: ${{inputs.policy_allow}}
