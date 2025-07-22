@@ -133,7 +133,7 @@ jobs:
         env:
           AQUA_GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
 
-      - uses: aquaproj/update-checksum-action@fe0daf077d2972d06f07c2debb8ed640b64fa09d # v0.2.6
+      - uses: aquaproj/update-checksum-action@c5df5a5c2a897a9b807068f062140506d092e7ac # v0.2.7
         with:
           skip_push: ${{steps.skip_push.outputs.skip_push}}
           prune: ${{inputs.prune}}
