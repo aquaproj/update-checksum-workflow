@@ -138,9 +138,11 @@ jobs:
           skip_push: ${{steps.skip_push.outputs.skip_push}}
           prune: ${{inputs.prune}}
           working_directory: ${{inputs.working_directory}}
-        env:
-          # To trigger GitHub Actions Workflow by pushing a commit, GitHub App token is required.
-          # github.token doesn't trigger GitHub Actions Workflow.
+          # The action's github_token input defaults to github.token and takes precedence over the
+          # GITHUB_TOKEN env, so the token must be passed as an input or it is silently ignored.
+          # Prefer the generated token (a GitHub App token when configured) so the pushed commit
+          # triggers workflows; a commit pushed with github.token does not:
           # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-          # > When you use the repository's GITHUB_TOKEN to perform tasks, events triggered by the GITHUB_TOKEN, with the exception of workflow_dispatch and repository_dispatch, will not create a new workflow run.
-          GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
+          # > events triggered by the GITHUB_TOKEN [...] will not create a new workflow run.
+          # Fall back to github.token when no token is generated (no app credentials or gh_token).
+          github_token: ${{steps.generate_token.outputs.token != '' && steps.generate_token.outputs.token || github.token}}
