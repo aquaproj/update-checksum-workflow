@@ -110,12 +110,12 @@ jobs:
           TOKEN_TYPE: ${{steps.generate_token.outputs.token_type}}
 
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{steps.ref.outputs.ref}}
           persist-credentials: false
 
-      - uses: aquaproj/aqua-installer@611554c6f0137ba41c8dd15aca8bee82504ea461 # v4.1.1
+      - uses: aquaproj/aqua-installer@v4.1.1
         if: steps.generate_token.outputs.token_type == 'empty'
         with:
           aqua_version: ${{inputs.aqua_version}}
@@ -124,7 +124,7 @@ jobs:
         env:
           AQUA_GITHUB_TOKEN: ${{github.token}}
 
-      - uses: aquaproj/aqua-installer@611554c6f0137ba41c8dd15aca8bee82504ea461 # v4.1.1
+      - uses: aquaproj/aqua-installer@v4.1.1
         if: "steps.generate_token.outputs.token_type != 'empty'"
         with:
           aqua_version: ${{inputs.aqua_version}}
@@ -133,7 +133,7 @@ jobs:
         env:
           AQUA_GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
 
-      - uses: aquaproj/update-checksum-action@c5df5a5c2a897a9b807068f062140506d092e7ac # v0.2.7
+      - uses: aquaproj/update-checksum-action@v0.2.7
         with:
           skip_push: ${{steps.skip_push.outputs.skip_push}}
           prune: ${{inputs.prune}}
